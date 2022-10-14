@@ -26,27 +26,28 @@ public class ThirdPersonCameraController : MonoBehaviour
     private bool rotationInitialized;
     private bool cursorLocked = false;
     private bool cursorPositionSaved = false;
-    private MousePosition mp;
-    [DllImport("user32.dll")]
-    public static extern bool SetCursorPos(int X, int Y);
-    [DllImport("user32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool GetCursorPos(out MousePosition lpMousePosition);
 
-    [StructLayout(LayoutKind.Sequential)]
-    public struct MousePosition
-    {
-        public int x;
-        public int y;
-    }
-    
-    // Start is called before the first frame update
+    #region Set Cursor Position
+    // private MousePosition mp;
+    // [DllImport("user32.dll")]
+    // public static extern bool SetCursorPos(int X, int Y);
+    // [DllImport("user32.dll")]
+    // [return: MarshalAs(UnmanagedType.Bool)]
+    // private static extern bool GetCursorPos(out MousePosition lpMousePosition);
+
+    // [StructLayout(LayoutKind.Sequential)]
+    // public struct MousePosition
+    // {
+    //     public int x;
+    //     public int y;
+    // }
+    #endregion
+
     void Start()
     {
         InitialRotation();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Target != null)
