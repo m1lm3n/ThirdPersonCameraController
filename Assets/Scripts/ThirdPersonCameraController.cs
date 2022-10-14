@@ -8,6 +8,8 @@ public class ThirdPersonCameraController : MonoBehaviour
 {
     public Transform Target;
     public int MouseButton = 1; // right button by default
+    public bool RotationX = true;
+    public bool RotationY = true;
     public float Distance = 20;
     public float MinDistance = 1;
     public float MaxDistance = 20;
@@ -112,9 +114,14 @@ public class ThirdPersonCameraController : MonoBehaviour
             rotation = transform.eulerAngles;
             rotationInitialized = true;
         }
-
-        rotation.y += Input.GetAxis("Mouse X") * RotationSpeed;
-        rotation.x -= Input.GetAxis("Mouse Y") * RotationSpeed;
+        if (RotationX)
+        {
+            rotation.y += Input.GetAxis("Mouse X") * RotationSpeed;
+        }
+        if (RotationY)
+        {
+            rotation.x -= Input.GetAxis("Mouse Y") * RotationSpeed;
+        }
         rotation.x = Mathf.Clamp(rotation.x, xMinAngle, xMaxAngle);
         transform.rotation = Quaternion.Euler(rotation.x, rotation.y, 0);
     }
