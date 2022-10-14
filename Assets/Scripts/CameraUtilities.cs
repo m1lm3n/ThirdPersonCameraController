@@ -8,7 +8,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Reflection;
 
-public class Utilites : MonoBehaviour
+public class CameraUtilities : MonoBehaviour
 {
     public static bool IsCursorOverUserInterface()
     {

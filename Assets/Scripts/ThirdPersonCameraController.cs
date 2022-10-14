@@ -32,7 +32,6 @@ public class ThirdPersonCameraController : MonoBehaviour
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GetCursorPos(out MousePosition lpMousePosition);
-    public static System.Drawing.Point Position { get; set; }
 
     [StructLayout(LayoutKind.Sequential)]
     public struct MousePosition
@@ -40,6 +39,7 @@ public class ThirdPersonCameraController : MonoBehaviour
         public int x;
         public int y;
     }
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -53,7 +53,7 @@ public class ThirdPersonCameraController : MonoBehaviour
         {
             ApplyCameraOffset();
 
-            if (!Utilites.IsCursorOverUserInterface())
+            if (!CameraUtilities.IsCursorOverUserInterface())
             {
                 if (Input.mousePresent)
                 {
@@ -87,7 +87,7 @@ public class ThirdPersonCameraController : MonoBehaviour
     private void CameraZoom()
     {
         float speed = Input.mousePresent ? ZoomSpeedMouse : ZoomSpeedTouch;
-        float step = Utilites.GetZoomUniversal() * speed;
+        float step = CameraUtilities.GetZoomUniversal() * speed;
         Distance = Mathf.Clamp(Distance - step, MinDistance, MaxDistance);
     }
     private void CameraCollision()
