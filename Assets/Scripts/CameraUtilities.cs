@@ -5,16 +5,13 @@ public class CameraUtilities : MonoBehaviour
 {
     public static bool IsCursorOverUserInterface()
     {
-        // IsPointerOverGameObject check for left mouse (default)
         if (EventSystem.current.IsPointerOverGameObject())
             return true;
 
-        // IsPointerOverGameObject check for touches
         for (int i = 0; i < Input.touchCount; ++i)
             if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(i).fingerId))
                 return true;
 
-        // OnGUI check
         return GUIUtility.hotControl != 0;
     }
     public static float GetAxisRawScrollUniversal()
