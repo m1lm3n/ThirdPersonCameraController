@@ -414,6 +414,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Target: {fileID: 986780166}
   MouseButton: 1
+  RotationX: 1
+  RotationY: 1
   Distance: 20
   MinDistance: 1
   MaxDistance: 20
@@ -426,6 +428,7 @@ MonoBehaviour:
   viewBlockingLayers:
     serializedVersion: 2
     m_Bits: 192
+  DetectionRadius: 0.25
 --- !u!1 &986780162
 GameObject:
   m_ObjectHideFlags: 0

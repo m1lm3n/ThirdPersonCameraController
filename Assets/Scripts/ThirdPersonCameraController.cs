@@ -20,9 +20,9 @@ public class ThirdPersonCameraController : MonoBehaviour
     public float xMaxAngle = 90;
     public Vector3 Camera_offset = Vector3.zero;
     public LayerMask viewBlockingLayers;
+    public float DetectionRadius = 0.25f;
 
     private UnityEngine.Color cameraRayColor = UnityEngine.Color.red;
-    private float detectionRadius = 0.5f;
     private Vector3 rotation = Vector3.zero;
     private Vector3 targetPos = Vector3.zero;
     private bool rotationInitialized;
@@ -100,7 +100,7 @@ public class ThirdPersonCameraController : MonoBehaviour
 
         Debug.DrawLine(targetPos, transform.position, cameraRayColor);
 
-        if (Physics.SphereCast(ray, detectionRadius, out raycastHit, Distance, viewBlockingLayers))
+        if (Physics.SphereCast(ray, DetectionRadius, out raycastHit, Distance, viewBlockingLayers))
         {
             float distance = Vector3.Distance(targetPos, raycastHit.point);
 
@@ -174,7 +174,7 @@ public class ThirdPersonCameraController : MonoBehaviour
     // Draw a Gizmo around where the camera has been projected to.
     void OnDrawGizmos()
     {
-        Gizmos.color = UnityEngine.Color.blue;
-        Gizmos.DrawWireSphere(transform.position, detectionRadius);
+        Gizmos.color = UnityEngine.Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, DetectionRadius);
     }
 }
