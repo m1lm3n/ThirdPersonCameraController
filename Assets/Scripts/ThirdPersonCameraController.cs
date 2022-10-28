@@ -1,3 +1,4 @@
+using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Drawing;
 using System.Collections;
@@ -18,8 +19,6 @@ public class ThirdPersonCameraController : MonoBehaviour
     public float ZoomSpeedMouse = 1;
     public float ZoomSpeedTouch = 0.2f;
     public float RotationSpeed = 10;
-    public float xMinAngle = -90;
-    public float xMaxAngle = 90;
     public Vector3 Camera_offset = Vector3.zero;
     public LayerMask ViewBlockingLayers;
     public float DetectionRadius = 1f;
@@ -42,6 +41,8 @@ public class ThirdPersonCameraController : MonoBehaviour
 
     public float SphereCastRadius = 0.25f;
     private UnityEngine.Color cameraRayColor = UnityEngine.Color.red;
+    private float xMinAngle = -35;
+    private float xMaxAngle = 90;
     private Vector3 rotation = Vector3.zero;
     private Vector3 targetPos = Vector3.zero;
     private bool rotationInitialized;
@@ -73,6 +74,7 @@ public class ThirdPersonCameraController : MonoBehaviour
     {
         if (Target != null)
         {
+            SphereCastRadius = Mathf.Clamp(SphereCastRadius, 0.23f, 0.33f); //Optimal for Field of View 60
             ApplyCameraOffset();
             CalculatePivotPoint();
             CalculatePivotPointStarted();
@@ -109,7 +111,7 @@ public class ThirdPersonCameraController : MonoBehaviour
     }
     private float CalculateDetectionRadius()
     {
-        return (((SphereCastRadius * 2) * 3) - SphereCastRadius * 3) - SphereCastRadius;
+        return (((SphereCastRadius * 2)));
     }
     private float CalculateDetectionStartPoints()
     {
@@ -186,25 +188,26 @@ public class ThirdPersonCameraController : MonoBehaviour
             Vector3 startingPosition = targetPos;
             startingPosition += this.transform.right * pivotPointsStarted[i].x;
             startingPosition += this.transform.up * pivotPointsStarted[i].y;
-            startingPosition += this.transform.forward *pivotPointsStarted[i].z;
+            startingPosition += this.transform.forward * pivotPointsStarted[i].z;
 
             Vector3 endedPosition = this.transform.position;
             endedPosition += (this.transform.right * pivotPointsEnded[i].x);
-            endedPosition += this.transform.up *  pivotPointsEnded[i].y;
-            endedPosition += this.transform.forward *  pivotPointsEnded[i].z;
+            endedPosition += this.transform.up * pivotPointsEnded[i].y;
+            endedPosition += this.transform.forward * pivotPointsEnded[i].z;
 
             Ray ray = new Ray(startingPosition, endedPosition);
-            RaycastHit raycastHit;
+            RaycastHit raycastHit = new RaycastHit();
             Debug.DrawLine(startingPosition, endedPosition, UnityEngine.Color.green);
-
+            float distanceToCheck = Distance - pivotPointsStarted[i].z;
 
             if (Physics.SphereCast(ray, SphereCastRadius, out raycastHit, Distance, ViewBlockingLayers))
             {
                 Debug.DrawLine(startingPosition, endedPosition, cameraRayColor);
 
-                float distance = Vector3.Distance(targetPos, raycastHit.point);
+                float distance = Vector3.Distance(startingPosition, raycastHit.point);
 
                 transform.position = targetPos - (transform.rotation * Vector3.forward * distance);
+
             }
         }
     }
