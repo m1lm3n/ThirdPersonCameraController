@@ -422,13 +422,11 @@ MonoBehaviour:
   ZoomSpeedMouse: 1
   ZoomSpeedTouch: 0.2
   RotationSpeed: 10
-  xMinAngle: -90
-  xMaxAngle: 90
   Camera_offset: {x: 0, y: 0, z: 0}
   ViewBlockingLayers:
     serializedVersion: 2
     m_Bits: 950
-  DetectionRadius: 0.75
+  DetectionRadius: 0.6
   pivotPointsEnded:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0.5, z: 0}
@@ -441,7 +439,7 @@ MonoBehaviour:
   - {x: 0, y: -0.5, z: 0}
   - {x: 0.5, y: 0, z: 0}
   - {x: -0.5, y: 0, z: 0}
-  SphereCastRadius: 0.25
+  SphereCastRadius: 0.2
 --- !u!1 &986780162
 GameObject:
   m_ObjectHideFlags: 0
