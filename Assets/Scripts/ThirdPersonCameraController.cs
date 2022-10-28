@@ -78,6 +78,7 @@ public class ThirdPersonCameraController : MonoBehaviour
             ApplyCameraOffset();
             CalculatePivotPoint();
             CalculatePivotPointStarted();
+
             if (!CameraUtilities.IsCursorOverUserInterface())
             {
                 if (Input.mousePresent)
@@ -204,7 +205,7 @@ public class ThirdPersonCameraController : MonoBehaviour
             {
                 Debug.DrawLine(startingPosition, endedPosition, cameraRayColor);
 
-                float distance = Vector3.Distance(startingPosition, raycastHit.point);
+                float distance = Vector3.Distance(targetPos, raycastHit.point);
 
                 transform.position = targetPos - (transform.rotation * Vector3.forward * distance);
 
