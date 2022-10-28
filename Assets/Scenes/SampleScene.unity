@@ -140,7 +140,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!64 &674920898
 MeshCollider:
@@ -425,10 +425,23 @@ MonoBehaviour:
   xMinAngle: -90
   xMaxAngle: 90
   Camera_offset: {x: 0, y: 0, z: 0}
-  viewBlockingLayers:
+  ViewBlockingLayers:
     serializedVersion: 2
-    m_Bits: 192
-  DetectionRadius: 0.25
+    m_Bits: 950
+  DetectionRadius: 0.75
+  pivotPointsEnded:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0.5, z: 0}
+  - {x: 0, y: -0.5, z: 0}
+  - {x: 0.5, y: 0, z: 0}
+  - {x: -0.5, y: 0, z: 0}
+  pivotPointsStarted:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0.5, z: 0}
+  - {x: 0, y: -0.5, z: 0}
+  - {x: 0.5, y: 0, z: 0}
+  - {x: -0.5, y: 0, z: 0}
+  SphereCastRadius: 0.25
 --- !u!1 &986780162
 GameObject:
   m_ObjectHideFlags: 0
