@@ -426,7 +426,7 @@ MonoBehaviour:
   ViewBlockingLayers:
     serializedVersion: 2
     m_Bits: 768
-  DetectionRadius: 1
+  DetectionRadius: 0.69
   pivotPointsEnded:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0.5, z: 0}
@@ -439,7 +439,7 @@ MonoBehaviour:
   - {x: 0, y: -0.5, z: 0}
   - {x: 0.5, y: 0, z: 0}
   - {x: -0.5, y: 0, z: 0}
-  SphereCastRadius: 0.25
+  SphereCastRadius: 0.23
 --- !u!1 &986780162
 GameObject:
   m_ObjectHideFlags: 0

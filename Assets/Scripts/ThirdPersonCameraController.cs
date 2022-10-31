@@ -39,7 +39,7 @@ public class ThirdPersonCameraController : MonoBehaviour
                     new Vector3(-0.5f, 0, 0),
                 };
 
-    public float SphereCastRadius = 0.25f;
+    public float SphereCastRadius = 0.23f;
     private UnityEngine.Color cameraRayColor = UnityEngine.Color.red;
     private float xMinAngle = -35;
     private float xMaxAngle = 90;
@@ -112,7 +112,7 @@ public class ThirdPersonCameraController : MonoBehaviour
     }
     private float CalculateDetectionRadius()
     {
-        return (((SphereCastRadius * 2)));
+        return (SphereCastRadius * 2);
     }
     private float CalculateDetectionStartPoints()
     {
@@ -325,6 +325,7 @@ public class ThirdPersonCameraController : MonoBehaviour
     void OnDrawGizmos()
     {
         DrawWireSphere(this.transform.position, CalculateOverallGizmoRadius(), UnityEngine.Color.red);
+        DrawWireSphere(targetPos, CalculateOverallGizmoRadius(), UnityEngine.Color.red);
 
         Vector3 startingPosition_Center = this.transform.position;
         startingPosition_Center += this.transform.right * pivotPointsEnded[0].x;
@@ -332,17 +333,35 @@ public class ThirdPersonCameraController : MonoBehaviour
         startingPosition_Center += this.transform.forward * pivotPointsEnded[0].z;
         DrawWireSphere(startingPosition_Center, SphereCastRadius, UnityEngine.Color.green);
 
+        Vector3 startingPosition_Center_Started = targetPos;
+        startingPosition_Center_Started += this.transform.right * pivotPointsStarted[0].x;
+        startingPosition_Center_Started += this.transform.up * pivotPointsStarted[0].y;
+        startingPosition_Center_Started += this.transform.forward * pivotPointsStarted[0].z;
+        DrawWireSphere(startingPosition_Center_Started, SphereCastRadius, UnityEngine.Color.green);
+
         Vector3 startingPosition_Up = this.transform.position;
         startingPosition_Up += this.transform.right * pivotPointsEnded[1].x;
         startingPosition_Up += this.transform.up * pivotPointsEnded[1].y;
         startingPosition_Up += this.transform.forward * pivotPointsEnded[1].z;
         DrawWireSphere(startingPosition_Up, SphereCastRadius, UnityEngine.Color.green);
 
+        Vector3 startingPosition_Up_Started = targetPos;
+        startingPosition_Up_Started += this.transform.right * pivotPointsStarted[1].x;
+        startingPosition_Up_Started += this.transform.up * pivotPointsStarted[1].y;
+        startingPosition_Up_Started += this.transform.forward * pivotPointsStarted[1].z;
+        DrawWireSphere(startingPosition_Up_Started, SphereCastRadius, UnityEngine.Color.green);
+
         Vector3 startingPosition_Down = this.transform.position;
         startingPosition_Down += this.transform.right * pivotPointsEnded[2].x;
         startingPosition_Down += this.transform.up * pivotPointsEnded[2].y;
         startingPosition_Down += this.transform.forward * pivotPointsEnded[2].z;
         DrawWireSphere(startingPosition_Down, (SphereCastRadius), UnityEngine.Color.green);
+
+        Vector3 startingPosition_Down_Started = targetPos;
+        startingPosition_Down_Started += this.transform.right * pivotPointsStarted[2].x;
+        startingPosition_Down_Started += this.transform.up * pivotPointsStarted[2].y;
+        startingPosition_Down_Started += this.transform.forward * pivotPointsStarted[2].z;
+        DrawWireSphere(startingPosition_Down_Started, (SphereCastRadius), UnityEngine.Color.green);
 
         Vector3 startingPosition_Right = this.transform.position;
         startingPosition_Right += this.transform.right * pivotPointsEnded[3].x;
