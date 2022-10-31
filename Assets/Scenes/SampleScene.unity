@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 674920900}
   - component: {fileID: 674920899}
   - component: {fileID: 674920898}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -425,8 +425,8 @@ MonoBehaviour:
   Camera_offset: {x: 0, y: 0, z: 0}
   ViewBlockingLayers:
     serializedVersion: 2
-    m_Bits: 950
-  DetectionRadius: 0.6
+    m_Bits: 768
+  DetectionRadius: 1
   pivotPointsEnded:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0.5, z: 0}
@@ -439,7 +439,7 @@ MonoBehaviour:
   - {x: 0, y: -0.5, z: 0}
   - {x: 0.5, y: 0, z: 0}
   - {x: -0.5, y: 0, z: 0}
-  SphereCastRadius: 0.2
+  SphereCastRadius: 0.25
 --- !u!1 &986780162
 GameObject:
   m_ObjectHideFlags: 0
