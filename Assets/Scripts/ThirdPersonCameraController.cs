@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
-
+using System.Linq;
 
 public class ThirdPersonCameraController : MonoBehaviour
 {
@@ -38,17 +38,21 @@ public class ThirdPersonCameraController : MonoBehaviour
                     new Vector3(0.5f, 0, 0),
                     new Vector3(-0.5f, 0, 0),
                 };
+    public List<GameObject> forDirectionPointsStarted = new List<GameObject>();
+    public List<GameObject> forDirectionPointsEnded = new List<GameObject>();
 
     public float SphereCastRadius = 0.23f;
     private UnityEngine.Color cameraRayColor = UnityEngine.Color.red;
-    private float xMinAngle = -35;
+    private float xMinAngle = -90;
     private float xMaxAngle = 90;
     private Vector3 rotation = Vector3.zero;
     private Vector3 targetPos = Vector3.zero;
     private bool rotationInitialized;
     private bool cursorLocked = false;
     private bool cursorPositionSaved = false;
-
+    private RaycastHit raycastHit = new RaycastHit();
+    private float[] hitPoints = new[] { Mathf.Infinity, Mathf.Infinity, Mathf.Infinity, Mathf.Infinity, Mathf.Infinity };
+    private Vector3[] hitPointsPosition = new[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
     #region Set Cursor Position
     // private MousePosition mp;
     // [DllImport("user32.dll")]
@@ -68,43 +72,11 @@ public class ThirdPersonCameraController : MonoBehaviour
     void Start()
     {
         InitialRotation();
+        CreateStartedGameObjects();
+        CreateEndedGameObjects();
     }
 
-    void Update()
-    {
-        if (Target != null)
-        {
-            SphereCastRadius = Mathf.Clamp(SphereCastRadius, 0.23f, 0.33f); //Optimal for Field of View 60
-            ApplyCameraOffset();
-            CalculatePivotPoint();
-            CalculatePivotPointStarted();
 
-            if (!CameraUtilities.IsCursorOverUserInterface())
-            {
-                if (Input.mousePresent)
-                {
-                    if (Input.GetMouseButton(MouseButton))
-                    {
-                        CameraRotation();
-                        LockCursor();
-                    }
-                    else
-                    {
-                        UnlockCursor();
-                    }
-                }
-                else
-                {
-                    InitialRotation();
-                }
-
-                CameraZoom();
-            }
-
-            ApplyCameraPosition();
-            CameraCollisionNew();
-        }
-    }
     private float CalculateOverallGizmoRadius()
     {
         DetectionRadius = (SphereCastRadius) * 3;
@@ -145,13 +117,57 @@ public class ThirdPersonCameraController : MonoBehaviour
             }
         }
     }
+
+    private void CreateStartedGameObjects()
+    {
+        GameObject go1 = new GameObject();
+        go1.name = "StartedPoint_Zero";
+        forDirectionPointsStarted.Add(go1);
+
+        GameObject go2 = new GameObject();
+        go2.name = "StartedPoint_Up";
+        forDirectionPointsStarted.Add(go2);
+
+        GameObject go3 = new GameObject();
+        go3.name = "StartedPoint_Down";
+        forDirectionPointsStarted.Add(go3);
+
+        GameObject go4 = new GameObject();
+        go4.name = "StartedPoint_Right";
+        forDirectionPointsStarted.Add(go4);
+
+        GameObject go5 = new GameObject();
+        go5.name = "StartedPoint_Left";
+        forDirectionPointsStarted.Add(go5);
+    }
+    private void CreateEndedGameObjects()
+    {
+        GameObject go1 = new GameObject();
+        go1.name = "EndPoint_Zero";
+        forDirectionPointsEnded.Add(go1);
+
+        GameObject go2 = new GameObject();
+        go2.name = "EndPoint_Up";
+        forDirectionPointsEnded.Add(go2);
+
+        GameObject go3 = new GameObject();
+        go3.name = "EndPoint_Down";
+        forDirectionPointsEnded.Add(go3);
+
+        GameObject go4 = new GameObject();
+        go4.name = "EndPoint_Right";
+        forDirectionPointsEnded.Add(go4);
+
+        GameObject go5 = new GameObject();
+        go5.name = "EndPoint_Left";
+        forDirectionPointsEnded.Add(go5);
+    }
     private void CalculatePivotPointStarted()
     {
         for (int i = 0; i < pivotPointsStarted.Count; i++)
         {
             switch (i)
             {
-
                 case 0:
                     pivotPointsStarted[i] = Vector3.zero;
                     break;
@@ -171,6 +187,112 @@ public class ThirdPersonCameraController : MonoBehaviour
             }
         }
     }
+    private void AssignStartedGameObjectsPosition()
+    {
+        for (int i = 0; i < pivotPointsStarted.Count; i++)
+        {
+            switch (i)
+            {
+                case 0:
+                    pivotPointsStarted[i] = Vector3.zero;
+                    Vector3 startingPosition = targetPos;
+                    startingPosition += this.transform.right * pivotPointsStarted[i].x;
+                    startingPosition += this.transform.up * pivotPointsStarted[i].y;
+                    startingPosition += this.transform.forward * pivotPointsStarted[i].z;
+                    forDirectionPointsStarted[i].transform.position = startingPosition;
+                    forDirectionPointsStarted[i].transform.LookAt(forDirectionPointsEnded[i].transform);
+                    break;
+                case 1:
+                    pivotPointsStarted[i] = new Vector3(0, CalculateDetectionStartPoints(), 0); //Up
+                    Vector3 startingPosition1 = targetPos;
+                    startingPosition1 += this.transform.right * pivotPointsStarted[i].x;
+                    startingPosition1 += this.transform.up * pivotPointsStarted[i].y;
+                    startingPosition1 += this.transform.forward * pivotPointsStarted[i].z;
+                    forDirectionPointsStarted[i].transform.position = startingPosition1;
+                    forDirectionPointsStarted[i].transform.LookAt(forDirectionPointsEnded[i].transform);
+                    break;
+                case 2:
+                    pivotPointsStarted[i] = new Vector3(0, -(CalculateDetectionStartPoints()), 0); //Down
+                    Vector3 startingPosition2 = targetPos;
+                    startingPosition2 += this.transform.right * pivotPointsStarted[i].x;
+                    startingPosition2 += this.transform.up * pivotPointsStarted[i].y;
+                    startingPosition2 += this.transform.forward * pivotPointsStarted[i].z;
+                    forDirectionPointsStarted[i].transform.position = startingPosition2;
+                    forDirectionPointsStarted[i].transform.LookAt(forDirectionPointsEnded[i].transform);
+
+                    break;
+                case 3:
+                    pivotPointsStarted[i] = new Vector3(CalculateDetectionStartPoints(), 0, 0); //Right
+                    Vector3 startingPosition3 = targetPos;
+                    startingPosition3 += this.transform.right * pivotPointsStarted[i].x;
+                    startingPosition3 += this.transform.up * pivotPointsStarted[i].y;
+                    startingPosition3 += this.transform.forward * pivotPointsStarted[i].z;
+                    forDirectionPointsStarted[i].transform.position = startingPosition3;
+                    forDirectionPointsStarted[i].transform.LookAt(forDirectionPointsEnded[i].transform);
+
+                    break;
+                case 4:
+                    pivotPointsStarted[i] = new Vector3(-(CalculateDetectionStartPoints()), 0, 0); //Left
+                    Vector3 startingPosition4 = targetPos;
+                    startingPosition4 += this.transform.right * pivotPointsStarted[i].x;
+                    startingPosition4 += this.transform.up * pivotPointsStarted[i].y;
+                    startingPosition4 += this.transform.forward * pivotPointsStarted[i].z;
+                    forDirectionPointsStarted[i].transform.position = startingPosition4;
+                    forDirectionPointsStarted[i].transform.LookAt(forDirectionPointsEnded[i].transform);
+
+                    break;
+            }
+        }
+    }
+    private void AssignEndedGameObjectsPosition()
+    {
+        for (int i = 0; i < pivotPointsEnded.Count; i++)
+        {
+            switch (i)
+            {
+                case 0:
+                    pivotPointsEnded[i] = Vector3.zero;
+                    Vector3 startingPosition = this.transform.position;
+                    startingPosition += this.transform.right * pivotPointsEnded[i].x;
+                    startingPosition += this.transform.up * pivotPointsEnded[i].y;
+                    startingPosition += this.transform.forward * pivotPointsEnded[i].z;
+                    forDirectionPointsEnded[i].transform.position = startingPosition;
+                    break;
+                case 1:
+                    pivotPointsEnded[i] = new Vector3(0, CalculateDetectionStartPoints(), 0); //Up
+                    Vector3 startingPosition1 = this.transform.position;
+                    startingPosition1 += this.transform.right * pivotPointsEnded[i].x;
+                    startingPosition1 += this.transform.up * pivotPointsEnded[i].y;
+                    startingPosition1 += this.transform.forward * pivotPointsEnded[i].z;
+                    forDirectionPointsEnded[i].transform.position = startingPosition1;
+                    break;
+                case 2:
+                    pivotPointsEnded[i] = new Vector3(0, -(CalculateDetectionStartPoints()), 0); //Down
+                    Vector3 startingPosition2 = this.transform.position;
+                    startingPosition2 += this.transform.right * pivotPointsEnded[i].x;
+                    startingPosition2 += this.transform.up * pivotPointsEnded[i].y;
+                    startingPosition2 += this.transform.forward * pivotPointsEnded[i].z;
+                    forDirectionPointsEnded[i].transform.position = startingPosition2;
+                    break;
+                case 3:
+                    pivotPointsEnded[i] = new Vector3(CalculateDetectionStartPoints(), 0, 0); //Right
+                    Vector3 startingPosition3 = this.transform.position;
+                    startingPosition3 += this.transform.right * pivotPointsEnded[i].x;
+                    startingPosition3 += this.transform.up * pivotPointsEnded[i].y;
+                    startingPosition3 += this.transform.forward * pivotPointsEnded[i].z;
+                    forDirectionPointsEnded[i].transform.position = startingPosition3;
+                    break;
+                case 4:
+                    pivotPointsEnded[i] = new Vector3(-(CalculateDetectionStartPoints()), 0, 0); //Left
+                    Vector3 startingPosition4 = this.transform.position;
+                    startingPosition4 += this.transform.right * pivotPointsEnded[i].x;
+                    startingPosition4 += this.transform.up * pivotPointsEnded[i].y;
+                    startingPosition4 += this.transform.forward * pivotPointsEnded[i].z;
+                    forDirectionPointsEnded[i].transform.position = startingPosition4;
+                    break;
+            }
+        }
+    }
     private void InitialRotation()
     {
         transform.rotation = Quaternion.Euler(new Vector3(45, 0, 0));
@@ -181,34 +303,78 @@ public class ThirdPersonCameraController : MonoBehaviour
         float step = CameraUtilities.GetZoomUniversal() * speed;
         Distance = Mathf.Clamp(Distance - step, MinDistance, MaxDistance);
     }
+    private void ApplyCameraOffset()
+    {
+        targetPos = Target.position + Camera_offset;
+    }
+    private float LowestHitPoint(params float[] inputs)
+    {
+        float lowest = inputs[0];
+        foreach (var input in inputs)
+            if (input < lowest) lowest = input;
+        return lowest;
+    }
     private void CameraCollisionNew()
     {
         Vector3 backTowardsCamera = -this.transform.forward;
         for (int i = 0; i < pivotPointsEnded.Count; i++)
         {
-            Vector3 startingPosition = targetPos;
-            startingPosition += this.transform.right * pivotPointsStarted[i].x;
-            startingPosition += this.transform.up * pivotPointsStarted[i].y;
-            startingPosition += this.transform.forward * pivotPointsStarted[i].z;
+            Ray ray = new Ray(forDirectionPointsStarted[i].transform.position, forDirectionPointsStarted[i].transform.forward);
+            Debug.DrawLine(forDirectionPointsStarted[i].transform.position, forDirectionPointsEnded[i].transform.position, UnityEngine.Color.green);
+            float distanceToCheck = Distance - forDirectionPointsEnded[i].transform.position.z;
 
-            Vector3 endedPosition = this.transform.position;
-            endedPosition += (this.transform.right * pivotPointsEnded[i].x);
-            endedPosition += this.transform.up * pivotPointsEnded[i].y;
-            endedPosition += this.transform.forward * pivotPointsEnded[i].z;
-
-            Ray ray = new Ray(startingPosition, endedPosition);
-            RaycastHit raycastHit = new RaycastHit();
-            Debug.DrawLine(startingPosition, endedPosition, UnityEngine.Color.green);
-            float distanceToCheck = Distance - pivotPointsStarted[i].z;
-
-            if (Physics.SphereCast(ray, SphereCastRadius, out raycastHit, Distance, ViewBlockingLayers))
+            if (i != 0)
             {
-                Debug.DrawLine(startingPosition, endedPosition, cameraRayColor);
+                if (Physics.SphereCast(ray, SphereCastRadius, out raycastHit, distanceToCheck, ViewBlockingLayers))
+                {
+                    Debug.DrawLine(forDirectionPointsStarted[i].transform.position, forDirectionPointsEnded[i].transform.position, cameraRayColor);
+                    if (i == 1)
+                    {
+                        hitPoints[1] = Vector3.Magnitude(raycastHit.point);
+                        hitPointsPosition[1] = raycastHit.point;
+                    }
+                    else if (i == 2)
+                    {
+                        hitPoints[2] = Vector3.Magnitude(raycastHit.point);
+                        hitPointsPosition[2] = raycastHit.point;
+                    }
+                    else if (i == 3)
+                    {
+                        hitPoints[3] = Vector3.Magnitude(raycastHit.point);
+                        hitPointsPosition[3] = raycastHit.point;
+                    }
+                    else if (i == 4)
+                    {
+                        hitPoints[4] = Vector3.Magnitude(raycastHit.point);
+                        hitPointsPosition[4] = raycastHit.point;
+                    }
 
-                float distance = Vector3.Distance(targetPos, raycastHit.point);
-
-                transform.position = targetPos - (transform.rotation * Vector3.forward * distance);
-
+                    float distance = Vector3.Distance(targetPos, hitPointsPosition[Array.IndexOf(hitPoints, hitPoints.Min())]);
+                    if (distance <= Distance)
+                    {
+                        transform.position = targetPos - (transform.rotation * Vector3.forward * distance);
+                    }
+                }
+                else
+                {
+                    if (i == 1)
+                    {
+                        hitPoints[1] = Mathf.Infinity;
+                    }
+                    else if (i == 2)
+                    {
+                        hitPoints[2] = Mathf.Infinity;
+                    }
+                    else if (i == 3)
+                    {
+                        hitPoints[3] = Mathf.Infinity;
+                    }
+                    else if (i == 4)
+                    {
+                        hitPoints[4] = Mathf.Infinity;
+                    }
+                    // transform.position = targetPos - (transform.rotation * Vector3.forward * Distance);
+                }
             }
         }
     }
@@ -243,10 +409,7 @@ public class ThirdPersonCameraController : MonoBehaviour
     {
         transform.position = targetPos - (transform.rotation * Vector3.forward * Distance);
     }
-    private void ApplyCameraOffset()
-    {
-        targetPos = Target.position + Camera_offset;
-    }
+
     private void LockCursor()
     {
         cursorLocked = true;
@@ -386,5 +549,42 @@ public class ThirdPersonCameraController : MonoBehaviour
         startingPosition_Left_Started += this.transform.up * pivotPointsStarted[4].y;
         startingPosition_Left_Started += this.transform.forward * pivotPointsStarted[4].z;
         DrawWireSphere(startingPosition_Left_Started, SphereCastRadius, UnityEngine.Color.green);
+    }
+    void Update()
+    {
+        if (Target != null)
+        {
+            SphereCastRadius = Mathf.Clamp(SphereCastRadius, 0.23f, 0.33f); //Optimal for Field of View 60
+            ApplyCameraOffset();
+            CalculatePivotPoint();
+            CalculatePivotPointStarted();
+            AssignEndedGameObjectsPosition();
+            AssignStartedGameObjectsPosition();
+
+            if (!CameraUtilities.IsCursorOverUserInterface())
+            {
+                if (Input.mousePresent)
+                {
+                    if (Input.GetMouseButton(MouseButton))
+                    {
+                        CameraRotation();
+                        LockCursor();
+                    }
+                    else
+                    {
+                        UnlockCursor();
+                    }
+                }
+                else
+                {
+                    InitialRotation();
+                }
+
+                CameraZoom();
+            }
+
+            ApplyCameraPosition();
+            CameraCollisionNew();
+        }
     }
 }
