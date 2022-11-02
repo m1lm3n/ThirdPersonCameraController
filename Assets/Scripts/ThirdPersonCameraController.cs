@@ -342,7 +342,7 @@ public class ThirdPersonCameraController : MonoBehaviour
         {
             Ray ray = new Ray(forDirectionPointsStarted[i].transform.position, forDirectionPointsStarted[i].transform.forward);
             Debug.DrawLine(forDirectionPointsStarted[i].transform.position, forDirectionPointsEnded[i].transform.position, UnityEngine.Color.green);
-            float distanceToCheck = Distance - forDirectionPointsEnded[i].transform.position.z;
+            float distanceToCheck = Distance;
 
             if (Physics.SphereCast(ray, SphereCastRadius, out raycastHit, distanceToCheck, ViewBlockingLayers))
             {
