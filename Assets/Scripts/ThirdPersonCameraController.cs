@@ -38,8 +38,8 @@ public class ThirdPersonCameraController : MonoBehaviour
                     new Vector3(0.5f, 0, 0),
                     new Vector3(-0.5f, 0, 0),
                 };
-    public List<GameObject> forDirectionPointsStarted = new List<GameObject>();
-    public List<GameObject> forDirectionPointsEnded = new List<GameObject>();
+    private List<GameObject> forDirectionPointsStarted = new List<GameObject>();
+    private List<GameObject> forDirectionPointsEnded = new List<GameObject>();
 
     public float SphereCastRadius = 0.23f;
     private UnityEngine.Color cameraRayColor = UnityEngine.Color.red;
