@@ -50,9 +50,8 @@ public class ThirdPersonCameraController : MonoBehaviour
     private bool rotationInitialized;
     private bool cursorLocked = false;
     private bool cursorPositionSaved = false;
-    private RaycastHit raycastHit = new RaycastHit();
-    private float[] hitPoints = new[] { Mathf.Infinity, Mathf.Infinity, Mathf.Infinity, Mathf.Infinity, Mathf.Infinity };
-    private Vector3[] hitPointsPosition = new[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
+    public float[] hitPoints = new[] { Mathf.Infinity, Mathf.Infinity, Mathf.Infinity, Mathf.Infinity, Mathf.Infinity };
+    public Vector3[] hitPointsPosition = new[] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
     #region Set Cursor Position
     // private MousePosition mp;
     // [DllImport("user32.dll")]
@@ -337,40 +336,21 @@ public class ThirdPersonCameraController : MonoBehaviour
     }
     private void CameraCollisionNew()
     {
-        Vector3 backTowardsCamera = -this.transform.forward;
         for (int i = 0; i < pivotPointsEnded.Count; i++)
         {
+            AssignEndedGameObjectsPosition();
+            AssignStartedGameObjectsPosition();
+            
             Ray ray = new Ray(forDirectionPointsStarted[i].transform.position, forDirectionPointsStarted[i].transform.forward);
             Debug.DrawLine(forDirectionPointsStarted[i].transform.position, forDirectionPointsEnded[i].transform.position, UnityEngine.Color.green);
-            float distanceToCheck = Distance;
+            float distanceToCheck = Vector3.Distance(forDirectionPointsStarted[i].transform.position, forDirectionPointsEnded[i].transform.position);
+            RaycastHit raycastHit = new RaycastHit();
 
-            if (Physics.SphereCast(ray, SphereCastRadius, out raycastHit, distanceToCheck, ViewBlockingLayers))
+            if (Physics.SphereCast(ray, SphereCastRadius, out raycastHit, Distance, ViewBlockingLayers))
             {
-                if (i == 0)
-                {
-                    hitPoints[0] = Vector3.Magnitude(raycastHit.point);
-                    hitPointsPosition[0] = raycastHit.point;
-                }
-                else if (i == 1)
-                {
-                    hitPoints[1] = Vector3.Magnitude(raycastHit.point);
-                    hitPointsPosition[1] = raycastHit.point;
-                }
-                else if (i == 2)
-                {
-                    hitPoints[2] = Vector3.Magnitude(raycastHit.point);
-                    hitPointsPosition[2] = raycastHit.point;
-                }
-                else if (i == 3)
-                {
-                    hitPoints[3] = Vector3.Magnitude(raycastHit.point);
-                    hitPointsPosition[3] = raycastHit.point;
-                }
-                else if (i == 4)
-                {
-                    hitPoints[4] = Vector3.Magnitude(raycastHit.point);
-                    hitPointsPosition[4] = raycastHit.point;
-                }
+                hitPoints[i] = Vector3.Magnitude(targetPos - raycastHit.point);
+                hitPointsPosition[i] = raycastHit.point;
+
                 Debug.DrawLine(forDirectionPointsStarted[Array.IndexOf(hitPoints, hitPoints.Min())].transform.position, hitPointsPosition[Array.IndexOf(hitPoints, hitPoints.Min())], cameraRayColor);
 
                 float distance = Vector3.Distance(targetPos, hitPointsPosition[Array.IndexOf(hitPoints, hitPoints.Min())]);
@@ -381,26 +361,7 @@ public class ThirdPersonCameraController : MonoBehaviour
             }
             else
             {
-                if (i == 0)
-                {
-                    hitPoints[0] = Mathf.Infinity;
-                }
-                else if (i == 1)
-                {
-                    hitPoints[1] = Mathf.Infinity;
-                }
-                else if (i == 2)
-                {
-                    hitPoints[2] = Mathf.Infinity;
-                }
-                else if (i == 3)
-                {
-                    hitPoints[3] = Mathf.Infinity;
-                }
-                else if (i == 4)
-                {
-                    hitPoints[4] = Mathf.Infinity;
-                }
+                hitPoints[i] = Mathf.Infinity;
                 // transform.position = targetPos - (transform.rotation * Vector3.forward * Distance);
             }
         }
@@ -583,10 +544,7 @@ public class ThirdPersonCameraController : MonoBehaviour
         {
             SphereCastRadius = Mathf.Clamp(SphereCastRadius, 0.15f, 0.6f); //Optimal for Field of View 60
             ApplyCameraOffset();
-            CalculatePivotPointEnded();
-            CalculatePivotPointStarted();
-            AssignEndedGameObjectsPosition();
-            AssignStartedGameObjectsPosition();
+
 
             if (!CameraUtilities.IsCursorOverUserInterface())
             {
@@ -611,6 +569,10 @@ public class ThirdPersonCameraController : MonoBehaviour
             }
 
             ApplyCameraPosition();
+            CalculatePivotPointEnded();
+            CalculatePivotPointStarted();
+            AssignEndedGameObjectsPosition();
+            AssignStartedGameObjectsPosition();
             CameraCollisionNew();
         }
     }
