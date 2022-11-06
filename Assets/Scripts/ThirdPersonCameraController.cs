@@ -1,10 +1,6 @@
 using System;
-using System.Security.Cryptography.X509Certificates;
-using System.Drawing;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Runtime.InteropServices;
 using System.Linq;
 
 public class ThirdPersonCameraController : MonoBehaviour
