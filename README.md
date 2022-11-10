@@ -1,8 +1,12 @@
 # Third Person Camera Controller
+
+![](./Documentation/Screenshot at Nov 10 11-38-02.png)
+
 Third person camera controller for RPG games
-with Camera Zoom (Mouse, Touches), Rotation, Collision Detection and Cursor Lock for Unity.
+with Camera Zoom (Mouse, Touches), Rotation, Sphere-Cross Collision Detection and Cursor Lock for Unity.
 Ease to use, just assign script ThirdPersonCameraController.cs to your Main Camera and add target on which it looks.
 
+![](./Documentation/Nov-05-2022 19-59-11.gif)
 ## License
 The source code of this project and associated documentation is licensed under the [MIT license](./LICENSE.md).
 
